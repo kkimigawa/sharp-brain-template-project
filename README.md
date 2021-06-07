@@ -43,3 +43,7 @@ This repository is template homebrew application project.
         └ index.din
         └ AppMain.cfg
     ```
+
+## References
+
+https://blog.oucc.org/?p=303
