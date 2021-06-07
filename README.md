@@ -44,10 +44,13 @@ This repository is template homebrew application project.
         └ AppMain.cfg
     ```
     "アプリ" means "app" in Japanese.
+    <p align="left">
+        <img src="https://user-images.githubusercontent.com/13421166/121055591-5d88df00-c7f8-11eb-825f-3a82175776b4.png" />
+    </p>
 
 ## References
 
-* CeGCC
+* CeGCC  
   https://max.kellermann.name/projects/cegcc/
-* Example Sharp Brain source code.
+* Example Sharp Brain source code.  
   https://blog.oucc.org/?p=303
