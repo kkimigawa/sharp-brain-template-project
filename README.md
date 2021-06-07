@@ -3,7 +3,7 @@
 Sharp Brain is a electronic dictionary.  
 https://ja.wikipedia.org/wiki/Brain_(%E9%9B%BB%E5%AD%90%E8%BE%9E%E6%9B%B8)
 
-Brain based Windows CE 6.0.  
+Sharp Brain based Windows CE 6.0.  
 And you can run homebrew applications.
 
 This repository is template homebrew application project.
@@ -31,7 +31,7 @@ This repository is template homebrew application project.
     make clean
     ```
 
-## Transfer homebrew application to Brain
+## Transfer homebrew application to Sharp Brain
 
 1. Connect USB cable
 2. Transfer binary data
@@ -43,7 +43,11 @@ This repository is template homebrew application project.
         └ index.din
         └ AppMain.cfg
     ```
+    "アプリ" means "app" in Japanese.
 
 ## References
 
-https://blog.oucc.org/?p=303
+* CeGCC
+  https://max.kellermann.name/projects/cegcc/
+* Example Sharp Brain source code.
+  https://blog.oucc.org/?p=303
