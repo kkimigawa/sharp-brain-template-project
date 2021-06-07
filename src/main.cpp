@@ -1,57 +1,81 @@
 #include <windows.h>
 #include <tchar.h>
 
-#define WND_CLASS_NAME TEXT("OUCC_Advent_Main")
-
 static HFONT hFont;
-static RECT rect;
+static RECT windowRect;
 
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    HDC hdc;
-    LOGFONT rLogfont;
+void ProcWmSize(HWND hWnd)
+{
+    LOGFONT logFont;
+
+    GetClientRect(hWnd, &windowRect);
+
+    if (windowRect.right / 20 < windowRect.bottom / 4) {
+        logFont.lfHeight = windowRect.right / 20;
+    } else {
+        logFont.lfHeight = windowRect.bottom / 4;
+    }
+
+    logFont.lfWidth = 0;
+    logFont.lfEscapement = 0;
+    logFont.lfOrientation = 0;
+    logFont.lfWeight = FW_EXTRABOLD;
+    logFont.lfItalic = FALSE;
+    logFont.lfUnderline = FALSE;
+    logFont.lfStrikeOut = FALSE;
+    logFont.lfCharSet = SHIFTJIS_CHARSET;
+    logFont.lfOutPrecision = OUT_DEFAULT_PRECIS;
+    logFont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+    logFont.lfQuality = DEFAULT_QUALITY;
+    logFont.lfPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
+
+    _tcscpy(logFont.lfFaceName, TEXT("MS PGothic"));
+
+    DeleteObject(hFont);
+    hFont = CreateFontIndirect(&logFont);
+
+    InvalidateRect(hWnd, NULL, TRUE);
+}
+
+void ProcWmPaint(HWND hWnd)
+{
     PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
 
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, RGB(0, 0, 0));
+    SelectObject(hdc, hFont);
+    DrawText(hdc, TEXT("Hello, world!!"), -1, &windowRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    EndPaint(hWnd, &ps);
+}
+
+void ProcWmKeyUp(HWND hWnd, WPARAM wParam)
+{
+    switch (wParam) {
+        case VK_ESCAPE: // Sharp-Brain back key
+            DestroyWindow(hWnd);
+            break;
+    }
+}
+
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
     switch (uMsg) {
         case WM_CLOSE:
             DestroyWindow(hWnd);
             break;
 
-        case WM_SIZE: // ウィンドウサイズ変更時
-            GetClientRect(hWnd, &rect);
-
-            if (rect.right / 20 < rect.bottom / 4) {
-                rLogfont.lfHeight = rect.right / 20;
-            } else {
-                rLogfont.lfHeight = rect.bottom / 4;
-            }
-            rLogfont.lfWidth = 0;
-            rLogfont.lfEscapement = 0;
-            rLogfont.lfOrientation = 0;
-            rLogfont.lfWeight = FW_EXTRABOLD;
-            rLogfont.lfItalic = FALSE;
-            rLogfont.lfUnderline = FALSE;
-            rLogfont.lfStrikeOut = FALSE;
-            rLogfont.lfCharSet = SHIFTJIS_CHARSET;
-            rLogfont.lfOutPrecision = OUT_DEFAULT_PRECIS;
-            rLogfont.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-            rLogfont.lfQuality = DEFAULT_QUALITY;
-            rLogfont.lfPitchAndFamily = VARIABLE_PITCH | FF_SWISS;
-            _tcscpy(rLogfont.lfFaceName, TEXT("MS PGothic"));
-            DeleteObject(hFont);
-            hFont = CreateFontIndirect(&rLogfont);
-
-            InvalidateRect(hWnd, NULL, TRUE);
+        case WM_SIZE:
+            ProcWmSize(hWnd);
             break;
 
         case WM_PAINT:
-            hdc = BeginPaint(hWnd, &ps);
+            ProcWmPaint(hWnd);
+            break;
 
-            SetBkMode(hdc, TRANSPARENT);
-            SetTextColor(hdc, RGB(0, 0, 0));
-            SelectObject(hdc, hFont);
-            DrawText(hdc, TEXT("Hello, OUCC Advent Calendar 2020!"), -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-
-            EndPaint(hWnd, &ps);
+        case WM_KEYUP:
+            ProcWmKeyUp(hWnd, wParam);
             break;
 
         case WM_DESTROY:
@@ -65,11 +89,13 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
     return 0;
 }
 
-// 第3引数をLPSTR型からLPWSTR型に変更(UTF-16LEのみ対応のWinCEの独自仕様)
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd) {
-    WNDCLASS wcl; // WNDCLASSEXは非対応
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
+{
+    TCHAR* className = TEXT("Hello");
+
+    WNDCLASS wcl;
     wcl.hInstance = hInstance;
-    wcl.lpszClassName = WND_CLASS_NAME;
+    wcl.lpszClassName = className;
     wcl.lpfnWndProc = WindowProc;
     wcl.style = 0;
     wcl.hIcon = NULL;
@@ -85,9 +111,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
 
     HWND hWnd = CreateWindowEx(
         0,
-        WND_CLASS_NAME,
-        TEXT("OUCC Advent Calendar 2020"),
-        WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX,
+        className,
+        TEXT("Title"),
+        WS_OVERLAPPED | WS_MAXIMIZE,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
         480,
@@ -102,7 +128,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLin
     }
 
     ShowWindow(hWnd, nShowCmd);
-    ShowWindow(hWnd, SW_MAXIMIZE);
     UpdateWindow(hWnd);
 
     MSG msg;
