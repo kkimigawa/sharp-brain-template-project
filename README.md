@@ -4,15 +4,15 @@ Sharp Brain is a electronic dictionary.
 https://ja.wikipedia.org/wiki/Brain_(%E9%9B%BB%E5%AD%90%E8%BE%9E%E6%9B%B8)
 
 Brain based Windows CE 6.0.  
-And you can run on homebrew application.
+And you can run homebrew applications.
 
 This repository is template homebrew application project.
 
 ## Setup
 
-### Ubuntu
+### for Ubuntu
 
-1. Add sources.list
+1. Install CeGCC
     ```bash
     sudo echo "deb https://max.kellermann.name/debian cegcc_buster-default main" > /etc/apt/sources.list
     sudo apt update
@@ -36,7 +36,7 @@ This repository is template homebrew application project.
 1. Connect USB cable
 2. Transfer binary data
     ```
-    Root
+    SDCard Root
     └ アプリ
       └ {homebrew application name}
         └ AppMain.exe
